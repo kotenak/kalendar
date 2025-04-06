@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
+<head>
     <title>Живые истории</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="styles.css">
 
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <script src="gesture-detector.js"></script>
     <script src="gesture-handler.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <a-scene
       arjs
       embedded
@@ -23,18 +22,18 @@
       id="scene"
     >
 
-  <a-marker
-    type="pattern"
-    url="pattern1.patt"
-    raycaster="objects: .clickable"
-    emitevents="true"
-    cursor="fuse: false; rayOrigin: mouse;"
-    id="markerA"
-  >
-  <a-video src="video1.MP4" rotation="-90 0 0"></a-video>
-  </a-marker>
+        <a-marker
+            type="pattern"
+            url="pattern1.patt"
+            raycaster="objects: .clickable"
+            emitevents="true"
+            cursor="fuse: false; rayOrigin: mouse;"
+            id="markerA"
+        >
+            <a-video src="video1.mp4" rotation="-90 0 0" width="4" height="2.25" autoplay="true" loop="true"></a-video>
+        </a-marker>
 
-      <a-entity camera></a-entity>
+        <a-entity camera></a-entity>
     </a-scene>
-  </body>
+</body>
 </html>
