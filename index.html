@@ -1,70 +1,17 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR kalendar App</title>
+    <title>AR Video on QR Code</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
-    <style>
-        body { margin: 0; }
-        #video { display: none; }
-    </style>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
 </head>
-<body>
-    <video id="video" width="300" height="300" autoplay></video>
-    <a-scene embedded>
-        <a-assets>
-            <!-- Замените ссылки на ваши видео -->
-            <video id="video1" src="video1.mp4" autoplay loop="true" crossorigin="anonymous"></video>
-            <video id="video2" src="video2.mp4" autoplay loop="true" crossorigin="anonymous"></video>
-            <!-- Добавьте остальные видео -->
-        </a-assets>
-
-        <a-entity id="marker" geometry="primitive: plane; width: 1; height: 1;" material="color: white;"></a-entity>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <a-video src="url_to_your_video.mp4" position="0 0 0" width="4" height="2.25"></a-video>
+        </a-marker>
+        <a-entity camera></a-entity>
     </a-scene>
-
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        const marker = document.getElementById('marker');
-
-        // Запуск камеры
-        navigator.mediaDevices.getUser Media({ video: { facingMode: 'environment' } })
-            .then(stream => {
-                video.srcObject = stream;
-                video.setAttribute('playsinline', true);
-                video.play();
-                requestAnimationFrame(tick);
-            });
-
-        function tick() {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                if (code) {
-                    handleQRCode(code.data);
-                }
-            }
-            requestAnimationFrame(tick);
-        }
-
-        function handleQRCode(data) {
-            // Здесь вы можете сопоставить данные QR-кода с видео
-            if (data === 'qr1') {
-                marker.setAttribute('visible', true);
-                marker.setAttribute('material', 'src: #video1');
-            } else if (data === 'qr2') {
-                marker.setAttribute('visible', true);
-                marker.setAttribute('material', 'src: #video2');
-            }
-            // Добавьте остальные условия для других QR-кодов
-        }
-    </script>
 </body>
 </html>
+
