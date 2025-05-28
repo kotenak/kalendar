@@ -77,19 +77,6 @@
       a-plane {
         opacity: 0.9;
       }
-      #permissionWarning {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: rgba(200,0,0,0.8);
-        color: white;
-        text-align: center;
-        padding: 15px;
-        font-size: 16px;
-        z-index: 1002;
-        display: none;
-      }
     </style>
   </head>
 
@@ -106,9 +93,6 @@
     
     <!-- Предупреждение о ориентации -->
     <div id="orientationWarning">Для лучшего отображения поверните телефон вертикально</div>
-    
-    <!-- Предупреждение о разрешении камеры -->
-    <div id="permissionWarning">Не удалось получить доступ к камере. Пожалуйста, проверьте разрешения браузера.</div>
 
     <!-- Видеоэлементы (скрытые) -->
     <video id="video0" src="materials/video0.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
@@ -168,116 +152,78 @@
     </a-scene>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const startScreen = document.getElementById("startScreen");
-        const startButton = document.getElementById("startButton");
-        const hint = document.getElementById("hint");
-        const orientationWarning = document.getElementById("orientationWarning");
-        const permissionWarning = document.getElementById("permissionWarning");
-        const videoCount = 12;
-        const videos = [];
+      const startScreen = document.getElementById("startScreen");
+      const startButton = document.getElementById("startButton");
+      const hint = document.getElementById("hint");
+      const orientationWarning = document.getElementById("orientationWarning");
+      const videoCount = 12;
+      const videos = [];
 
-        for (let i = 0; i < videoCount; i++) {
-          const video = document.getElementById("video" + i);
-          videos.push(video);
-        }
+      for (let i = 0; i < videoCount; i++) {
+        const video = document.getElementById("video" + i);
+        videos.push(video);
+      }
 
-        let isStarted = false;
-        let markerFound = false;
+      let isStarted = false;
+      let markerFound = false;
 
-        // Функция проверки ориентации
-        function checkOrientation() {
-          if (!isStarted) return;
-          
-          if (window.innerHeight < window.innerWidth) {
-            // Горизонтальная ориентация
-            orientationWarning.style.display = "block";
-          } else {
-            // Вертикальная ориентация
-            orientationWarning.style.display = "none";
-          }
-        }
-
-        // Функция проверки разрешения камеры
-        async function checkCameraPermission() {
-          try {
-            // Проверяем, есть ли у нас уже доступ к камере
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            // Если есть, сразу освобождаем ресурсы
-            stream.getTracks().forEach(track => track.stop());
-            return true;
-          } catch (error) {
-            console.error('Ошибка доступа к камере:', error);
-            permissionWarning.style.display = "block";
-            return false;
-          }
-        }
-
-        // Обработчик изменения ориентации
-        window.addEventListener("resize", checkOrientation);
-        window.addEventListener("orientationchange", checkOrientation);
-
-        startButton.addEventListener("click", async function() {
-          // Проверяем разрешение на камеру перед запуском
-          const hasPermission = await checkCameraPermission();
-          if (!hasPermission) return;
-          
-          isStarted = true;
-          startScreen.style.display = "none";
-          hint.style.display = "block";
-          checkOrientation(); // Проверить ориентацию при старте
-        });
-
-        function updateHintVisibility() {
-          if (!isStarted) return;
-          
-          if (markerFound) {
-            hint.style.display = "none";
-          } else {
-            hint.style.display = "block";
-          }
-        }
-
-        // Используем делегирование событий для маркеров
-        const scene = document.querySelector('a-scene');
+      // Функция проверки ориентации
+      function checkOrientation() {
+        if (!isStarted) return;
         
-        scene.addEventListener('markerFound', function(event) {
-          const markerId = event.target.id;
-          const markerNumber = markerId.replace('marker', '');
-          
-          if (isStarted && markerNumber && !isNaN(markerNumber)) {
-            const videoIndex = parseInt(markerNumber);
-            if (videoIndex >= 0 && videoIndex < videos.length) {
-              markerFound = true;
-              updateHintVisibility();
-              videos[videoIndex].play().catch(e => 
-                console.warn(`Ошибка воспроизведения video${videoIndex}:`, e)
-              );
-            }
-          }
-        });
-
-        scene.addEventListener('markerLost', function(event) {
-          const markerId = event.target.id;
-          const markerNumber = markerId.replace('marker', '');
-          
-          if (isStarted && markerNumber && !isNaN(markerNumber)) {
-            const videoIndex = parseInt(markerNumber);
-            if (videoIndex >= 0 && videoIndex < videos.length) {
-              markerFound = false;
-              updateHintVisibility();
-              videos[videoIndex].pause();
-              videos[videoIndex].currentTime = 0;
-            }
-          }
-        });
-
-        // Для Android: принудительно запрашиваем доступ к камере при загрузке страницы
-        // Это помогает избежать проблем с разрешениями
-        if (/Android/i.test(navigator.userAgent)) {
-          checkCameraPermission();
+        if (window.innerHeight < window.innerWidth) {
+          // Горизонтальная ориентация
+          orientationWarning.style.display = "block";
+        } else {
+          // Вертикальная ориентация
+          orientationWarning.style.display = "none";
         }
+      }
+
+      // Обработчик изменения ориентации
+      window.addEventListener("resize", checkOrientation);
+      window.addEventListener("orientationchange", checkOrientation);
+
+      startButton.addEventListener("click", () => {
+        isStarted = true;
+        startScreen.style.display = "none";
+        hint.style.display = "block";
+        checkOrientation(); // Проверить ориентацию при старте
       });
+
+      function updateHintVisibility() {
+        if (!isStarted) return;
+        
+        if (markerFound) {
+          hint.style.display = "none";
+        } else {
+          hint.style.display = "block";
+        }
+      }
+
+      for (let i = 0; i < videoCount; i++) {
+        const marker = document.getElementById("marker" + i);
+        const video = videos[i];
+
+        marker.addEventListener("markerFound", () => {
+          if (isStarted) {
+            markerFound = true;
+            updateHintVisibility();
+            video.play().catch((e) =>
+              console.warn(`Ошибка воспроизведения video${i}:`, e)
+            );
+          }
+        });
+
+        marker.addEventListener("markerLost", () => {
+          if (isStarted) {
+            markerFound = false;
+            updateHintVisibility();
+            video.pause();
+            video.currentTime = 0;
+          }
+        });
+      }
     </script>
   </body>
 </html>
