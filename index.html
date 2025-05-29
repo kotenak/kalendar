@@ -221,12 +221,11 @@
         isStarted = true;
         startScreen.style.display = "none";
         hint.style.display = "block";
-        checkOrientation(); // Проверить ориентацию при старте
+        checkOrientation();
         
-        // На некоторых устройствах требуется взаимодействие пользователя для воспроизведения аудио
-        // Воспроизводим и сразу останавливаем аудио, чтобы разблокировать
+        // Только загружаем аудио, но не воспроизводим
         audios.forEach(audio => {
-          audio.play().then(() => audio.pause()).catch(e => console.warn("Audio play/pause error:", e));
+          audio.load();
         });
       });
 
