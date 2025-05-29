@@ -12,7 +12,7 @@
       body {
         margin: 0;
         overflow: hidden;
-        font-family: 'Montserrat', Arial, sans-serif;
+        font-family: 'Montserrat', sans-serif;
       }
       #startScreen {
         position: absolute;
@@ -43,7 +43,7 @@
       #startButton {
         padding: 16px 32px;
         font-size: 18px;
-        font-family: 'Montserrat', Arial, sans-serif;
+        font-family: 'Montserrat', sans-serif;
         background-color: #c44e4e;
         color: white;
         border: none;
@@ -74,9 +74,9 @@
         text-align: center;
         padding: 15px;
         font-size: 16px;
+        font-family: 'Montserrat', sans-serif;
         z-index: 1001;
         display: none;
-        font-family: 'Montserrat', Arial, sans-serif;
       }
       a-plane {
         opacity: 0.9;
@@ -113,18 +113,18 @@
     <video id="video11" src="materials/video11.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
 
     <!-- Аудиоэлементы (скрытые) -->
-    <audio id="audio0" src="materials/audio0.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio1" src="materials/audio1.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio2" src="materials/audio2.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio3" src="materials/audio3.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio4" src="materials/audio4.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio5" src="materials/audio5.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio6" src="materials/audio6.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio7" src="materials/audio7.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio8" src="materials/audio8.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio9" src="materials/audio9.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio10" src="materials/audio10.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="audio11" src="materials/audio11.mp3" preload="none" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio0" src="materials/audio0.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio1" src="materials/audio1.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio2" src="materials/audio2.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio3" src="materials/audio3.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio4" src="materials/audio4.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio5" src="materials/audio5.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio6" src="materials/audio6.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio7" src="materials/audio7.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio8" src="materials/audio8.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio9" src="materials/audio9.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio10" src="materials/audio10.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio11" src="materials/audio11.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true; alpha: true;" vr-mode-ui="enabled: false">
       
@@ -180,14 +180,14 @@
 
       for (let i = 0; i < videoCount; i++) {
         const video = document.getElementById("video" + i);
-        const audio = document.getElementById("audio" + i);
         videos.push(video);
+        
+        const audio = document.getElementById("audio" + i);
         audios.push(audio);
       }
 
       let isStarted = false;
       let markerFound = false;
-      let audioUnlocked = false;
 
       // Функция проверки ориентации
       function checkOrientation() {
@@ -206,31 +206,11 @@
       window.addEventListener("resize", checkOrientation);
       window.addEventListener("orientationchange", checkOrientation);
 
-      // Функция для разблокировки аудио
-      function unlockAudio() {
-        if (audioUnlocked) return;
-        
-        // Создаем пустой аудиоэлемент и воспроизводим/останавливаем его
-        const unlockAudio = document.createElement('audio');
-        unlockAudio.volume = 0; // Без звука
-        unlockAudio.play()
-          .then(() => {
-            unlockAudio.pause();
-            unlockAudio.remove();
-            audioUnlocked = true;
-            console.log("Аудио разблокировано");
-          })
-          .catch(e => console.warn("Ошибка разблокировки аудио:", e));
-      }
-
       startButton.addEventListener("click", () => {
         isStarted = true;
         startScreen.style.display = "none";
         hint.style.display = "block";
-        checkOrientation();
-        
-        // Разблокируем аудио при первом взаимодействии
-        unlockAudio();
+        checkOrientation(); // Проверить ориентацию при старте
       });
 
       function updateHintVisibility() {
@@ -252,20 +232,12 @@
           if (isStarted) {
             markerFound = true;
             updateHintVisibility();
-            
-            // Воспроизводим видео
             video.play().catch((e) =>
               console.warn(`Ошибка воспроизведения video${i}:`, e)
             );
-            
-            // Воспроизводим аудио
-            if (audioUnlocked) {
-              audio.currentTime = 0;
-              audio.loop = true;
-              audio.play().catch((e) =>
-                console.warn(`Ошибка воспроизведения audio${i}:`, e)
-              );
-            }
+            audio.play().catch((e) =>
+              console.warn(`Ошибка воспроизведения audio${i}:`, e)
+            );
           }
         });
 
@@ -273,12 +245,8 @@
           if (isStarted) {
             markerFound = false;
             updateHintVisibility();
-            
-            // Останавливаем видео
             video.pause();
             video.currentTime = 0;
-            
-            // Останавливаем аудио
             audio.pause();
             audio.currentTime = 0;
           }
