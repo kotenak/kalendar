@@ -5,13 +5,14 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="lib/aframe.min.js"></script>
     <script src="lib/aframe-ar.js"></script>
     <style>
       body {
         margin: 0;
         overflow: hidden;
-        font-family: Arial, sans-serif;
+        font-family: 'Montserrat', sans-serif;
       }
       #startScreen {
         position: absolute;
@@ -37,6 +38,7 @@
         font-size: 36px;
         margin-bottom: 10vh;
         text-align: center;
+        font-weight: 700;
       }
       #startButton {
         padding: 16px 32px;
@@ -47,6 +49,7 @@
         border-radius: 8px;
         cursor: pointer;
         margin-bottom: 35vh;
+        font-family: 'Montserrat', sans-serif;
       }
       #hint {
         position: absolute;
@@ -60,6 +63,7 @@
         padding: 10px;
         display: none;
         z-index: 999;
+        font-family: 'Montserrat', sans-serif;
       }
       #orientationWarning {
         position: fixed;
@@ -73,6 +77,7 @@
         font-size: 16px;
         z-index: 1001;
         display: none;
+        font-family: 'Montserrat', sans-serif;
       }
       a-plane {
         opacity: 0.9;
@@ -107,6 +112,20 @@
     <video id="video9" src="materials/video9.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
     <video id="video10" src="materials/video10.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
     <video id="video11" src="materials/video11.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
+
+    <!-- Аудиоэлементы (скрытые) -->
+    <audio id="audio0" src="materials/audio0.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio1" src="materials/audio1.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio2" src="materials/audio2.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio3" src="materials/audio3.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio4" src="materials/audio4.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio5" src="materials/audio5.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio6" src="materials/audio6.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio7" src="materials/audio7.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio8" src="materials/audio8.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio9" src="materials/audio9.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio10" src="materials/audio10.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio11" src="materials/audio11.mp3" preload="auto" style="display: none;"></audio>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true; alpha: true;" vr-mode-ui="enabled: false">
       
@@ -158,10 +177,28 @@
       const orientationWarning = document.getElementById("orientationWarning");
       const videoCount = 12;
       const videos = [];
+      const audios = [];
 
+      // Инициализация видео и аудио элементов
       for (let i = 0; i < videoCount; i++) {
         const video = document.getElementById("video" + i);
+        const audio = document.getElementById("audio" + i);
         videos.push(video);
+        audios.push(audio);
+        
+        // Синхронизация видео и аудио
+        video.addEventListener('play', () => {
+          audio.currentTime = video.currentTime;
+          audio.play().catch(e => console.warn(`Ошибка воспроизведения audio${i}:`, e));
+        });
+        
+        video.addEventListener('pause', () => {
+          audio.pause();
+        });
+        
+        video.addEventListener('seeked', () => {
+          audio.currentTime = video.currentTime;
+        });
       }
 
       let isStarted = false;
@@ -204,6 +241,7 @@
       for (let i = 0; i < videoCount; i++) {
         const marker = document.getElementById("marker" + i);
         const video = videos[i];
+        const audio = audios[i];
 
         marker.addEventListener("markerFound", () => {
           if (isStarted) {
@@ -221,6 +259,8 @@
             updateHintVisibility();
             video.pause();
             video.currentTime = 0;
+            audio.pause();
+            audio.currentTime = 0;
           }
         });
       }
