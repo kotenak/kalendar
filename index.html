@@ -183,6 +183,11 @@
         videos.push(video);
         
         const audio = document.getElementById("audio" + i);
+        // Добавляем обработчик события окончания воспроизведения
+        audio.addEventListener('ended', function() {
+          this.currentTime = 0; // Перематываем в начало
+          this.play().catch(e => console.warn(`Ошибка воспроизведения audio${i}:`, e));
+        });
         audios.push(audio);
       }
 
