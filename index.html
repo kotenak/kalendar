@@ -12,7 +12,7 @@
       body {
         margin: 0;
         overflow: hidden;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', Arial, sans-serif;
       }
       #startScreen {
         position: absolute;
@@ -36,20 +36,20 @@
       #title {
         color: white;
         font-size: 36px;
+        font-weight: 700;
         margin-bottom: 10vh;
         text-align: center;
-        font-weight: 700;
       }
       #startButton {
         padding: 16px 32px;
         font-size: 18px;
+        font-family: 'Montserrat', Arial, sans-serif;
         background-color: #c44e4e;
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
         margin-bottom: 35vh;
-        font-family: 'Montserrat', sans-serif;
       }
       #hint {
         position: absolute;
@@ -63,7 +63,6 @@
         padding: 10px;
         display: none;
         z-index: 999;
-        font-family: 'Montserrat', sans-serif;
       }
       #orientationWarning {
         position: fixed;
@@ -77,7 +76,7 @@
         font-size: 16px;
         z-index: 1001;
         display: none;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', Arial, sans-serif;
       }
       a-plane {
         opacity: 0.9;
@@ -114,18 +113,18 @@
     <video id="video11" src="materials/video11.mp4" preload="auto" loop crossorigin="anonymous" playsinline webkit-playsinline style="display: none;"></video>
 
     <!-- Аудиоэлементы (скрытые) -->
-    <audio id="audio0" src="materials/audio0.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio1" src="materials/audio1.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio2" src="materials/audio2.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio3" src="materials/audio3.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio4" src="materials/audio4.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio5" src="materials/audio5.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio6" src="materials/audio6.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio7" src="materials/audio7.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio8" src="materials/audio8.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio9" src="materials/audio9.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio10" src="materials/audio10.mp3" preload="auto" style="display: none;"></audio>
-    <audio id="audio11" src="materials/audio11.mp3" preload="auto" style="display: none;"></audio>
+    <audio id="audio0" src="materials/audio0.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio1" src="materials/audio1.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio2" src="materials/audio2.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio3" src="materials/audio3.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio4" src="materials/audio4.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio5" src="materials/audio5.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio6" src="materials/audio6.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio7" src="materials/audio7.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio8" src="materials/audio8.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio9" src="materials/audio9.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio10" src="materials/audio10.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
+    <audio id="audio11" src="materials/audio11.mp3" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true; alpha: true;" vr-mode-ui="enabled: false">
       
@@ -179,26 +178,11 @@
       const videos = [];
       const audios = [];
 
-      // Инициализация видео и аудио элементов
       for (let i = 0; i < videoCount; i++) {
         const video = document.getElementById("video" + i);
         const audio = document.getElementById("audio" + i);
         videos.push(video);
         audios.push(audio);
-        
-        // Синхронизация видео и аудио
-        video.addEventListener('play', () => {
-          audio.currentTime = video.currentTime;
-          audio.play().catch(e => console.warn(`Ошибка воспроизведения audio${i}:`, e));
-        });
-        
-        video.addEventListener('pause', () => {
-          audio.pause();
-        });
-        
-        video.addEventListener('seeked', () => {
-          audio.currentTime = video.currentTime;
-        });
       }
 
       let isStarted = false;
@@ -249,6 +233,9 @@
             updateHintVisibility();
             video.play().catch((e) =>
               console.warn(`Ошибка воспроизведения video${i}:`, e)
+            );
+            audio.play().catch((e) =>
+              console.warn(`Ошибка воспроизведения audio${i}:`, e)
             );
           }
         });
